@@ -68,7 +68,7 @@ const router = new Router();
 
 
 router.post("/wh", async (ctx, next) => {
-  console.log(ctx);
+  console.log("start deploy");
   cp.execFile(path.join(__dirname,"./deploy.sh"), (error, stdout, stderr) => {
     if (error) {
       throw error;
@@ -77,9 +77,9 @@ router.post("/wh", async (ctx, next) => {
     console.log('部署成功')
   })
   
-  res.status(200).json({
+  ctx.body={
     msg: 'deploy success!'
-  })
+  }
 });
 
 app.use(router.routes());

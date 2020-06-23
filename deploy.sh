@@ -1,11 +1,11 @@
 #!/bin/bash
 echo "Start deployment"
 
-# 假设你要自动化部署的服务器位于/root/yourServer
+# 路径
 cd /var/www/html/project/WebHook
 
-git pull
+git pull origin master
 # 重启你的服务器
-pm2 restart hook
+# pm2 restart hook
 
 echo "End deployment"
