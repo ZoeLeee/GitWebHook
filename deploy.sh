@@ -6,6 +6,6 @@ cd /var/www/html/project/WebHook
 
 git pull
 # 重启你的服务器
-pm2 restart index.js
+pm2 restart hook
 
 echo "End deployment"
