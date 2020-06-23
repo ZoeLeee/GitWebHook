@@ -84,6 +84,23 @@ router.post("/wh", async (ctx, next) => {
     msg: 'deploy success!'
   }
 });
+router.post("/blogwh", async (ctx, next) => {
+  console.log("start deploy");
+  cp.execFile(path.join(__dirname,"./web.sh"), (error, stdout, stderr) => {
+    if (error) {
+      throw error;
+    }
+    if(stderr)
+      console.log(stderr);
+
+    console.log(stdout);
+    console.log('部署成功')
+  })
+  
+  ctx.body={
+    msg: 'blog success!'
+  }
+});
 
 app.use(router.routes());
 
