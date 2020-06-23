@@ -1,6 +1,9 @@
 #!/bin/bash
 echo "Start deployment"
 
+PATH=$PATH;
+
+echo PATH
 # 路径
 cd /var/www/html/project/WebHook
 
