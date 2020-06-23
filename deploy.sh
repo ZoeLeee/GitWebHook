@@ -9,6 +9,6 @@ cd /var/www/html/project/WebHook
 
 git pull origin master
 # 重启你的服务器
-# pm2 restart hook
+pm2 restart hook
 
 echo "End deployment"

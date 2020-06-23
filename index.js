@@ -107,3 +107,27 @@ app.use(router.routes());
 app.listen(3700, () => {
   console.log("listening on 3700")
 });
+
+router.post("/webserverwh", async (ctx, next) => {
+  console.log("start deploy");
+  cp.execFile(path.join(__dirname,"./web.sh"), (error, stdout, stderr) => {
+    if (error) {
+      throw error;
+    }
+    if(stderr)
+      console.log(stderr);
+
+    console.log(stdout);
+    console.log('部署成功')
+  })
+  
+  ctx.body={
+    msg: 'blog success!'
+  }
+});
+
+app.use(router.routes());
+
+app.listen(3700, () => {
+  console.log("listening on 3700")
+});
