@@ -5,6 +5,8 @@ const Router = require('koa-router');
 const fs = require('fs');
 const path = require('path');
 var os = require('os');
+const cp = require('child_process')
+
 
 app.use(async (ctx, next) => {
   // 允许来自所有域名请求
@@ -65,9 +67,19 @@ app.use(koaBody({
 const router = new Router();
 
 
-router.post("/webserver", async (ctx, next) => {
+router.post("/wh", async (ctx, next) => {
   console.log(ctx);
- 
+  cp.execFile(path.join(__dirname,"./deploy.sh"), (error, stdout, stderr) => {
+    if (error) {
+      throw error;
+    }
+    console.log(stdout);
+    console.log('部署成功')
+  })
+  
+  res.status(200).json({
+    msg: 'deploy success!'
+  })
 });
 
 app.use(router.routes());
