@@ -78,17 +78,14 @@ router.post("/wh", async (ctx, next) => {
     }
     if (stderr)
       console.log(stderr);
+    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署成功")}\n${new Date().toLocaleString()}`);
 
     console.log(stdout);
     console.log('部署成功')
-    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署成功")}
-    ${new Date().toLocaleString()}
-    `);
-    ctx.body = {
-      msg: 'deploy success!'
-    }
   })
-
+  ctx.body = {
+    msg: 'deploy success!'
+  }
 });
 router.post("/blogwh", async (ctx, next) => {
   console.log("start deploy");
