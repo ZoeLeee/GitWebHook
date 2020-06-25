@@ -102,12 +102,6 @@ router.post("/blogwh", async (ctx, next) => {
   }
 });
 
-app.use(router.routes());
-
-app.listen(3700, () => {
-  console.log("listening on 3700")
-});
-
 router.post("/webserverwh", async (ctx, next) => {
   console.log("start deploy");
   cp.execFile(path.join(__dirname,"./web.sh"), (error, stdout, stderr) => {
