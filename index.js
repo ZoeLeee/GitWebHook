@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 var os = require('os');
 const cp = require('child_process')
-const axios=require('axios').default;
+const axios = require('axios').default;
 
 app.use(async (ctx, next) => {
   // 允许来自所有域名请求
@@ -47,7 +47,7 @@ app.use(async (ctx, next) => {
   // getResponseHeader('myData')可以返回我们所需的值
   //https://www.rails365.net/articles/cors-jin-jie-expose-headers-wu
   // ctx.set("Access-Control-Expose-Headers", "myData");
-  
+
   /* 解决OPTIONS请求 */
   if (ctx.method == 'OPTIONS') {
     ctx.body = '';
@@ -66,67 +66,68 @@ app.use(koaBody({
 
 const router = new Router();
 
-
 router.post("/wh", async (ctx, next) => {
   console.log("start deploy");
-  cp.execFile(path.join(__dirname,"./deploy.sh"),["--PATH=haha"], (error, stdout, stderr) => {
+  cp.execFile(path.join(__dirname, "./deploy.sh"), async (error, stdout, stderr) => {
     if (error) {
-      axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${部署失败}\n${error.message}`);
-      ctx.body={
+      console.log(error.message);
+      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署失败")}\n${error.message}`);
+      ctx.body = {
         msg: error.message
       }
     }
-    if(stderr)
+    if (stderr)
       console.log(stderr);
 
     console.log(stdout);
     console.log('部署成功')
-    axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${部署成功}
+    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署成功")}
     ${new Date().toLocaleString()}
     `);
+    ctx.body = {
+      msg: 'deploy success!'
+    }
   })
-  
-  ctx.body={
-    msg: 'deploy success!'
-  }
+
 });
 router.post("/blogwh", async (ctx, next) => {
   console.log("start deploy");
-  cp.execFile(path.join(__dirname,"./web.sh"), (error, stdout, stderr) => {
+  cp.execFile(path.join(__dirname, "./web.sh"), (error, stdout, stderr) => {
     if (error) {
       throw error;
     }
-    if(stderr)
+    if (stderr)
       console.log(stderr);
 
     console.log(stdout);
     console.log('部署成功')
   })
-  
-  ctx.body={
+
+  ctx.body = {
     msg: 'blog success!'
   }
 });
 
 router.post("/webserverwh", async (ctx, next) => {
   console.log("start deploy");
-  cp.execFile(path.join(__dirname,"./web.sh"), (error, stdout, stderr) => {
+  cp.execFile(path.join(__dirname, "./web.sh"), (error, stdout, stderr) => {
     if (error) {
       throw error;
     }
-    if(stderr)
+    if (stderr)
       console.log(stderr);
 
     console.log(stdout);
     console.log('部署成功')
   })
-  
-  ctx.body={
+
+  ctx.body = {
     msg: 'blog success!'
   }
 });
 
 app.use(router.routes());
+
 
 app.listen(3700, () => {
   console.log("listening on 3700")
