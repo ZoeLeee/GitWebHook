@@ -76,13 +76,9 @@ router.post("/wh", async (ctx, next) => {
       }
     }
     if (stderr) {
-      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${stderr}`);
-      ctx.body = {
-        msg: stderr
-      }
       console.log(stderr);
     }
-    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署成功")}\n${stdout}`);
+    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署成功")}`);
 
     console.log(stdout);
     console.log('部署成功')
@@ -104,13 +100,9 @@ router.post("/blogwh", async (ctx, next) => {
       }
     }
     if (stderr) {
-      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=stderr:${stderr}`);
-      ctx.body = {
-        msg: stderr
-      }
       console.log(stderr);
     }
-    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("博客部署成功")}\n${stdout}`);
+    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("博客部署成功")}`);
 
     console.log(stdout);
     console.log('部署成功')
@@ -131,13 +123,9 @@ router.post("/webserverwh", async (ctx, next) => {
       }
     }
     if (stderr) {
-      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=stderr:${stderr}`);
-      ctx.body = {
-        msg: stderr
-      }
       console.log(stderr);
     }
-    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("后台部署成功")}\n${stdout}`);
+    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("后台部署成功")}`);
 
     console.log(stdout);
     console.log('部署成功')
