@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 var os = require('os');
 const cp = require('child_process')
-
+const axios=require('axios').default;
 
 app.use(async (ctx, next) => {
   // 允许来自所有域名请求
@@ -71,13 +71,19 @@ router.post("/wh", async (ctx, next) => {
   console.log("start deploy");
   cp.execFile(path.join(__dirname,"./deploy.sh"),["--PATH=haha"], (error, stdout, stderr) => {
     if (error) {
-      throw error;
+      axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${部署失败}\n${error.message}`);
+      ctx.body={
+        msg: error.message
+      }
     }
     if(stderr)
       console.log(stderr);
 
     console.log(stdout);
     console.log('部署成功')
+    axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${部署成功}
+    ${new Date().toLocaleString()}
+    `);
   })
   
   ctx.body={
