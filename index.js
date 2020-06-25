@@ -76,8 +76,13 @@ router.post("/wh", async (ctx, next) => {
         msg: error.message
       }
     }
-    if (stderr)
+    if (stderr) {
+      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署失败")}\n${stderr}`);
+      ctx.body = {
+        msg: stderr
+      }
       console.log(stderr);
+    }
     await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署成功")}\n${new Date().toLocaleString()}`);
 
     console.log(stdout);
