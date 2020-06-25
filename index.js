@@ -82,6 +82,7 @@ router.post("/wh", async (ctx, next) => {
 
     console.log(stdout);
     console.log('部署成功')
+    cp.execSync("pm2 restart hook")
   })
   ctx.body = {
     msg: 'deploy success!'
