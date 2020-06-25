@@ -92,9 +92,11 @@ router.post("/wh", async (ctx, next) => {
     msg: 'deploy success!'
   }
 });
+
+
 router.post("/blogwh", async (ctx, next) => {
   console.log("start deploy");
-  cp.execFile(path.join(__dirname, "./web.sh"), (error, stdout, stderr) => {
+  cp.execFile(path.join(__dirname, "./web.sh"),async (error, stdout, stderr) => {
     if (error) {
       await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("博客部署失败")}\n${error.message}`);
       ctx.body = {
@@ -102,7 +104,7 @@ router.post("/blogwh", async (ctx, next) => {
       }
     }
     if (stderr) {
-      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${stderr}`);
+      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=stderr:${stderr}`);
       ctx.body = {
         msg: stderr
       }
@@ -129,7 +131,7 @@ router.post("/webserverwh", async (ctx, next) => {
       }
     }
     if (stderr) {
-      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${stderr}`);
+      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=stderr:${stderr}`);
       ctx.body = {
         msg: stderr
       }

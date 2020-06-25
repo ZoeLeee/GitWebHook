@@ -6,5 +6,6 @@ cd /var/www/html/project/WebHook
 
 git pull origin master
 
+chmod 770 deploy.sh
 
 echo "End deployment"
