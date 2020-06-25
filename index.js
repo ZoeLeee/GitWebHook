@@ -70,20 +70,19 @@ router.post("/wh", async (ctx, next) => {
   console.log("start deploy");
   cp.execFile(path.join(__dirname, "./deploy.sh"), async (error, stdout, stderr) => {
     if (error) {
-      console.log(error.message);
       await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署失败")}\n${error.message}`);
       ctx.body = {
         msg: error.message
       }
     }
     if (stderr) {
-      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署失败")}\n${stderr}`);
+      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${stderr}`);
       ctx.body = {
         msg: stderr
       }
       console.log(stderr);
     }
-    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署成功")}\n${new Date().toLocaleString()}`);
+    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署成功")}\n${stdout}`);
 
     console.log(stdout);
     console.log('部署成功')
@@ -97,10 +96,19 @@ router.post("/blogwh", async (ctx, next) => {
   console.log("start deploy");
   cp.execFile(path.join(__dirname, "./web.sh"), (error, stdout, stderr) => {
     if (error) {
-      throw error;
+      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("博客部署失败")}\n${error.message}`);
+      ctx.body = {
+        msg: error.message
+      }
     }
-    if (stderr)
+    if (stderr) {
+      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${stderr}`);
+      ctx.body = {
+        msg: stderr
+      }
       console.log(stderr);
+    }
+    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("博客部署成功")}\n${stdout}`);
 
     console.log(stdout);
     console.log('部署成功')
@@ -115,13 +123,23 @@ router.post("/webserverwh", async (ctx, next) => {
   console.log("start deploy");
   cp.execFile(path.join(__dirname, "./web.sh"), (error, stdout, stderr) => {
     if (error) {
-      throw error;
+      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("后台部署失败")}\n${error.message}`);
+      ctx.body = {
+        msg: error.message
+      }
     }
-    if (stderr)
+    if (stderr) {
+      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${stderr}`);
+      ctx.body = {
+        msg: stderr
+      }
       console.log(stderr);
+    }
+    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("后台部署成功")}\n${stdout}`);
 
     console.log(stdout);
     console.log('部署成功')
+    cp.execSync("pm2 restart app")
   })
 
   ctx.body = {
