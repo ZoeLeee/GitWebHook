@@ -66,6 +66,14 @@ app.use(koaBody({
 
 const router = new Router();
 
+
+function auth(){
+  cp.execSync("cd /var/www/html/project/WebHook");
+  cp.execSync("chmod 770 auth.sh");
+  cp.execFileSync(path.join(__dirname, "./auth.sh"));
+}
+auth();
+
 router.post("/wh", async (ctx, next) => {
   console.log("start deploy");
   cp.execFile(path.join(__dirname, "./deploy.sh"), async (error, stdout, stderr) => {
@@ -74,6 +82,7 @@ router.post("/wh", async (ctx, next) => {
       ctx.body = {
         msg: error.message
       }
+      return;
     }
     if (stderr) {
       console.log(stderr);
