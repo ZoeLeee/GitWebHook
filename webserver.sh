@@ -6,8 +6,6 @@ cd /var/lib/jenkins/workspace/myserver
 
 git pull
 
-chmod 770 webserver.sh
-
 npm install&&npm run dll&&npm run build
 
 

@@ -115,7 +115,7 @@ router.post("/blogwh", async (ctx, next) => {
 
 router.post("/webserverwh", async (ctx, next) => {
   console.log("start deploy");
-  cp.execFile(path.join(__dirname, "./web.sh"),async (error, stdout, stderr) => {
+  cp.execFile(path.join(__dirname, "./webserver.shh"),async (error, stdout, stderr) => {
     if (error) {
       await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("后台部署失败")}\n${error.message}`);
       ctx.body = {
