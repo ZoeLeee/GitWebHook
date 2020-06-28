@@ -8,6 +8,6 @@ git pull
 
 npm install&&npm run dll&&npm run build
 
-pm2 restart app
+
 
 echo "End deployment webserver"
