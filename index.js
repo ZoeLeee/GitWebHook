@@ -5,14 +5,15 @@ const Router = require('koa-router');
 const fs = require('fs');
 const path = require('path');
 var os = require('os');
-const cp = require('child_process')
+const cp = require('child_process');
 const axios = require('axios').default;
+const crypto = require('crypto');
 
 app.use(async (ctx, next) => {
   // 允许来自所有域名请求
   // ctx.set("Access-Control-Allow-Origin", "http://localhost:7778");
   // ctx.set("Access-Control-Allow-Origin", "http://localhost:7778");
-  ctx.set('Access-Control-Allow-Origin', ctx.req.headers.origin)
+  ctx.set('Access-Control-Allow-Origin', ctx.req.headers.origin);
 
   // 设置所允许的HTTP请求方法
   ctx.set("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,OPTIONS");
@@ -55,100 +56,125 @@ app.use(async (ctx, next) => {
   } else {
     await next();
   }
-})
+});
 
-app.use(koaBody({
-  multipart: true,
-  formidable: {
-    maxFileSize: 200 * 1024 * 1024	// 设置上传文件大小最大限制，默认2M
-  }
-}));
+app.use(koaBody());
+
+async function sendMsg(msg) {
+  const timestamp = Date.now();
+  const secret = "SEC3dd3692c7231b78baaaabfbe13f54a2adbde1a38d920c59f6992cff40a915627";
+  const str = timestamp + "\n" + secret;
+  const hmac = crypto.createHmac('sha256', secret);
+  hmac.update(str);
+  let sign = encodeURIComponent(hmac.digest('base64'));
+
+  let url = `https://oapi.dingtalk.com/robot/send?access_token=640583ebbceb8dae5aa91ddde448979b7aedbb500e882dfcc0f36df4569872d8&timestamp=${timestamp}&sign=${sign}`;
+  axios.post(url, {
+    "msgtype": "text",
+    "text": {
+      "content": msg
+    }
+  });
+}
 
 const router = new Router();
+const platform = os.platform();
 
-
-function auth(){
+function auth() {
   cp.execSync("cd /var/www/html/project/WebHook");
   cp.execSync("chmod 770 auth.sh");
   cp.execFileSync(path.join(__dirname, "./auth.sh"));
 }
-auth();
+
+function IsLinux() {
+  return platform === 'linux';
+}
+
+if (IsLinux())
+  auth();
 
 router.post("/wh", async (ctx, next) => {
+
   console.log("start deploy");
   cp.execFile(path.join(__dirname, "./deploy.sh"), async (error, stdout, stderr) => {
     if (error) {
-      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署失败")}\n${error.message}`);
+      await sendMsg("钩子部署失败\n" + error.message);
       ctx.body = {
         msg: error.message
-      }
+      };
       return;
     }
     if (stderr) {
       console.log(stderr);
     }
-    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("钩子部署成功")}`);
-
+    await sendMsg("钩子部署成功\n");
     console.log(stdout);
-    console.log('部署成功')
-    cp.execSync("pm2 restart hook")
-  })
+    console.log('部署成功');
+    cp.execSync("pm2 restart hook");
+  });
   ctx.body = {
     msg: 'deploy success!'
-  }
+  };
 });
 
 
 router.post("/blogwh", async (ctx, next) => {
   console.log("start deploy");
-  cp.execFile(path.join(__dirname, "./web.sh"),async (error, stdout, stderr) => {
+  if (!IsLinux()) {
+    await sendMsg("测试");
+    ctx.body = {
+      msg: "测试"
+    };
+    return;
+  }
+  cp.execFile(path.join(__dirname, "./web.sh"), async (error, stdout, stderr) => {
     if (error) {
-      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("博客部署失败")}\n${error.message}`);
+      await sendMsg("博客部署失败" + "\n" + error.message);
       ctx.body = {
         msg: error.message
-      }
+      };
     }
     if (stderr) {
       console.log(stderr);
     }
-    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("博客部署成功")}`);
+    await sendMsg("博客部署成功");
 
     console.log(stdout);
-    console.log('部署成功')
-  })
+    console.log('部署成功');
+  });
 
   ctx.body = {
     msg: 'blog success!'
-  }
+  };
 });
 
 router.post("/webserverwh", async (ctx, next) => {
   console.log("start deploy");
-  cp.execFile(path.join(__dirname, "./webserver.sh"),async (error, stdout, stderr) => {
+  cp.execFile(path.join(__dirname, "./webserver.sh"), async (error, stdout, stderr) => {
     if (error) {
-      await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("后台部署失败")}\n${error.message}`);
+      await sendMsg("后台部署失败\n" + error.message);
       ctx.body = {
         msg: error.message
-      }
+      };
     }
     if (stderr) {
       console.log(stderr);
     }
-    await axios.get(`http://api.dodream.wang:5700/send_group_msg?group_id=152904742&message=${encodeURI("后台部署成功")}`);
+    await sendMsg("后台部署成功");
 
     console.log(stdout);
-    console.log('部署成功')
-    cp.execSync("pm2 restart app")
-  })
+    console.log('部署成功');
+    cp.execSync("pm2 restart app");
+  });
 
   ctx.body = {
     msg: 'blog success!'
-  }
+  };
 });
 
 app.use(router.routes());
 
 
 app.listen(3700, () => {
-  console.log("listening on 3700")
+  console.log("listening on 3700");
 });
