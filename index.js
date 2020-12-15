@@ -8,6 +8,7 @@ var os = require('os');
 const cp = require('child_process');
 const axios = require('axios').default;
 const crypto = require('crypto');
+const routerFun = require("./router");
 
 app.use(async (ctx, next) => {
   // 允许来自所有域名请求
@@ -61,6 +62,7 @@ app.use(async (ctx, next) => {
 app.use(koaBody());
 
 async function sendMsg(msg) {
+  //http://idayer.com/node-js-hmac-hash-sha256/
   const timestamp = Date.now();
   const secret = "SEC3dd3692c7231b78baaaabfbe13f54a2adbde1a38d920c59f6992cff40a915627";
   const str = timestamp + "\n" + secret;
@@ -93,87 +95,13 @@ function IsLinux() {
 if (IsLinux())
   auth();
 
-router.post("/wh", async (ctx, next) => {
+routerFun(router, "/wh", "./deploy.sh", "Webhook", "pm2 restart hook");
 
-  console.log("start deploy");
-  cp.execFile(path.join(__dirname, "./deploy.sh"), async (error, stdout, stderr) => {
-    if (error) {
-      await sendMsg("钩子部署失败\n" + error.message);
-      ctx.body = {
-        msg: error.message
-      };
-      return;
-    }
-    if (stderr) {
-      console.log(stderr);
-    }
-    await sendMsg("钩子部署成功\n");
-    console.log(stdout);
-    console.log('部署成功');
-    cp.execSync("pm2 restart hook");
-  });
-  ctx.body = {
-    msg: 'deploy success!'
-  };
-});
+routerFun(router, "/blogwh", "./web.sh", "博客");
 
-
-router.post("/blogwh", async (ctx, next) => {
-  console.log("start deploy");
-  if (!IsLinux()) {
-    await sendMsg("测试");
-    ctx.body = {
-      msg: "测试"
-    };
-    return;
-  }
-  cp.execFile(path.join(__dirname, "./web.sh"), async (error, stdout, stderr) => {
-    if (error) {
-      await sendMsg("博客部署失败" + "\n" + error.message);
-      ctx.body = {
-        msg: error.message
-      };
-    }
-    if (stderr) {
-      console.log(stderr);
-    }
-    await sendMsg("博客部署成功");
-
-    console.log(stdout);
-    console.log('部署成功');
-  });
-
-  ctx.body = {
-    msg: 'blog success!'
-  };
-});
-
-router.post("/webserverwh", async (ctx, next) => {
-  console.log("start deploy");
-  cp.execFile(path.join(__dirname, "./webserver.sh"), async (error, stdout, stderr) => {
-    if (error) {
-      await sendMsg("后台部署失败\n" + error.message);
-      ctx.body = {
-        msg: error.message
-      };
-    }
-    if (stderr) {
-      console.log(stderr);
-    }
-    await sendMsg("后台部署成功");
-
-    console.log(stdout);
-    console.log('部署成功');
-    cp.execSync("pm2 restart app");
-  });
-
-  ctx.body = {
-    msg: 'blog success!'
-  };
-});
+routerFun(router, "/webserverwh", "./webserver.sh", "后台", "pm2 restart app");
 
 app.use(router.routes());
-
 
 app.listen(3700, () => {
   console.log("listening on 3700");
