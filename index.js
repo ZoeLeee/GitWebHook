@@ -83,7 +83,7 @@ const router = new Router();
 const platform = os.platform();
 
 function auth() {
-  cp.execSync("cd /var/www/html/project/WebHook");
+  cp.execSync("cd /var/www/html/projects/WebHook");
   cp.execSync("chmod 770 auth.sh");
   cp.execFileSync(path.join(__dirname, "./auth.sh"));
 }

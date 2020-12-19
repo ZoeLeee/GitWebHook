@@ -1,4 +1,4 @@
-cd /var/www/html/project/WebHook
+cd /var/www/html/projects/WebHook
 
 chmod 770 deploy.sh
 chmod 770 web.sh

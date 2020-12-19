@@ -32,6 +32,7 @@ module.exports = (router, api, sh, name, cmd) => {
         let ref = body.ref.split("/").pop();
         let authorName = body["head_commit"].author.name;
         let isCreate = body.created;
+        let files = body["head_commit"].modified;
 
         if (ref !== "master") {
             await sendMsg(`${authorName}${isCreate ? "创建了" : "更新了"}分支：${ref}`);

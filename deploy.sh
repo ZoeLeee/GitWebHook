@@ -2,7 +2,7 @@
 echo "Start deployment"
 
 # 路径
-cd /var/www/html/project/WebHook
+cd /var/www/html/projects/WebHook
 
 git pull origin master
 
