@@ -30,7 +30,9 @@ module.exports = (router, api, sh, name, cmd) => {
     router.post(api, async (ctx, next) => {
         let body = ctx.request.body;
         let ref = body.ref.split("/").pop();
-        let authorName = body["head_commit"].author.name;
+        let authorName = "";
+        if (body["head_commit"] && body["head_commit"].author && body["head_commit"].author.name)
+            authorName = body["head_commit"].author.name;
         let isCreate = body.created;
         let files = body["head_commit"].modified;
 

@@ -2,7 +2,7 @@
 echo "Start deployment"
 
 # 路径
-cd /var/lib/jenkins/workspace/first
+cd /var/www/html/projects/MyWeb
 
 git pull origin master
 
