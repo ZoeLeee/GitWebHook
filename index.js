@@ -101,7 +101,7 @@ routerFun(router, "/wh", "./deploy.sh", "Webhook", "pm2 restart hook");
 routerFun(router, "/blogwh", "./web.sh", "博客");
 
 routerFun(router, "/webserverwh", "./webserver.sh", "后台", "pm2 restart app");
-github(router, "/blog3d", "./webserver.sh", "后台", "pm2 restart app");
+github(router, "/blog3d", "./blog3d.sh", "3d博客项目");
 
 app.use(router.routes());
 
