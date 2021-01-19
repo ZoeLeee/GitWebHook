@@ -9,6 +9,7 @@ const cp = require('child_process');
 const axios = require('axios').default;
 const crypto = require('crypto');
 const routerFun = require("./router");
+const github = require("./github");
 
 app.use(async (ctx, next) => {
   // 允许来自所有域名请求
@@ -100,8 +101,13 @@ routerFun(router, "/wh", "./deploy.sh", "Webhook", "pm2 restart hook");
 routerFun(router, "/blogwh", "./web.sh", "博客");
 
 routerFun(router, "/webserverwh", "./webserver.sh", "后台", "pm2 restart app");
+github(router, "/blog3d", "./webserver.sh", "后台", "pm2 restart app");
 
 app.use(router.routes());
+
+app.use(async ctx => {
+  ctx.body = 'Hook服务已开启';
+});
 
 app.listen(3700, () => {
   console.log("listening on 3700");
