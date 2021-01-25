@@ -4,7 +4,8 @@ echo "Start deployment"
 # 路径
 cd /var/www/html/projects/MyWeb
 
-git pull origin master
+git reset --hard
+git pull
 
 npm install&&npm run dll&&npm run build
 

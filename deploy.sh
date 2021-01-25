@@ -4,7 +4,8 @@ echo "Start deployment"
 # 路径
 cd /var/www/html/projects/WebHook
 
-git pull origin master
+git reset --hard
+git pull
 
 chmod 777 deploy.sh
 chmod 777 web.sh
