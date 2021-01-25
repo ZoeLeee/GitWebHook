@@ -48,26 +48,33 @@ module.exports = (router, api, sh, name, cmd) => {
             };
             return;
         }
-        cp.execFile(path.join(__dirname, sh), async (error, stdout, stderr) => {
-            if (error) {
-                await sendMsg(name + "部署失败" + "\n" + error.message);
-                ctx.body = {
-                    msg: error.message
-                };
-            }
-            if (stderr) {
-                console.log(stderr);
-            }
-            await sendMsg(name + "部署成功");
+        try {
+            cp.execFile(path.join(__dirname, sh), async (error, stdout, stderr) => {
+                if (error) {
+                    await sendMsg(name + "部署失败" + "\n" + error.message || error);
+                    ctx.body = {
+                        msg: error.message
+                    };
+                }
+                if (stderr) {
+                    console.log(stderr);
+                }
+                await sendMsg(name + "部署成功");
 
-            console.log(stdout);
-            console.log('部署成功');
-            if (cmd)
-                cp.execSync(cmd);
-        });
+                console.log(stdout);
+                console.log('部署成功');
+                if (cmd)
+                    cp.execSync(cmd);
+            });
 
-        ctx.body = {
-            msg: name + "部署成功"
-        };
+            ctx.body = {
+                msg: name + "部署成功"
+            };
+        } catch (err) {
+            await sendMsg(name + "部署失败" + "\n" + err.message || err);
+            ctx.body = {
+                msg: error.message || err
+            };
+        }
     });
 };
