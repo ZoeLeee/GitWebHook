@@ -85,7 +85,7 @@ const platform = os.platform();
 
 function auth() {
   cp.execSync("cd /var/www/html/projects/WebHook");
-  cp.execSync("chmod 770 auth.sh");
+  cp.execSync("chmod 777 auth.sh");
   cp.execFileSync(path.join(__dirname, "./auth.sh"));
 }
 
